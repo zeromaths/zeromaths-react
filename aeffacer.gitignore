@@ -1,0 +1,33 @@
+# Fichier .gitignore - Indique à Git quels fichiers/dossiers ignorer
+
+# Dépendances
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# Fichiers de build de production
+/build
+
+# Fichiers de logs et de débogage
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Fichiers système et éditeur
+.DS_Store
+.env.local
+.env*.local
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Fichiers pdfjs-dist (souvent volumineux et peuvent être réinstallés)
+# Optionnel: si vous ne voulez pas commiter pdfjs-dist
+# /node_modules/pdfjs-dist/build
+# /node_modules/pdfjs-dist/web
+

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zeromaths.fr - Explorateur de Concepts Avancé avec IA et MathJax</title>
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Aligner en haut pour voir tout le contenu */
+            align-items: center;
+            min-height: 100vh;
+            background-color: #000000;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #ffffff;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .gradient-text {
+            font-size: 3.5rem;
+            font-weight: bold;
+            background: linear-gradient(to right, #0000CD, #00008B, #4B0082, #8A2BE2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.2),
+                1px 1px 3px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .feature-section, .input-section, .actions-section {
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            width: 100%;
+            max-width: 700px; /* Augmenter un peu la largeur max */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .feature-title, .section-title {
+            font-size: 1.5rem;
+            color: #8A2BE2;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .display-area {
+            margin-top: 15px;
+            font-size: 1.1rem;
+            color: #e0e0e0;
+            min-height: 40px;
+            text-align: left;
+            padding: 12px;
+            border-radius: 8px;
+            background-color: rgba(0, 0, 0, 0.2);
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+            line-height: 1.6;
+        }
+
+        .display-area mjx-container {
+            margin: 0.5em 0 !important;
+        }
+
+        .styled-button {
+            display: block;
+            margin: 20px auto 0 auto;
+            padding: 12px 25px;
+            font-size: 1rem;
+            color: #ffffff;
+            background-color: #8A2BE2;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.4);
+        }
+        .styled-button.secondary {
+            background-color: #5cb85c; /* Vert pour exemples */
+            box-shadow: 0 4px 15px rgba(92, 184, 92, 0.4);
+        }
+        .styled-button.tertiary {
+            background-color: #f0ad4e; /* Orange pour problèmes */
+            box-shadow: 0 4px 15px rgba(240, 173, 78, 0.4);
+        }
+
+        .styled-button:hover {
+            opacity: 0.9;
+        }
+        .styled-button:active {
+            transform: scale(0.98);
+        }
+        .styled-button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .input-field {
+            width: calc(100% - 24px);
+            padding: 12px;
+            margin-top: 5px; /* Réduit pour coller plus aux labels */
+            margin-bottom: 15px; /* Espace avant le bouton principal */
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: rgba(0, 0, 0, 0.1);
+            color: #ffffff;
+            font-size: 1rem;
+        }
+        .difficulty-selector label {
+            margin-right: 5px;
+        }
+        .difficulty-selector input[type="radio"] {
+            margin-right: 3px;
+            vertical-align: middle;
+        }
+         .difficulty-selector {
+            margin-bottom:15px;
+            text-align:center;
+        }
+
+
+        .loading-indicator {
+            margin-top: 15px;
+            font-size: 1rem;
+            color: #cccccc;
+            text-align: center;
+        }
+
+        @media (max-width: 700px) {
+            .gradient-text { font-size: 2.8rem; }
+            .feature-section, .input-section, .actions-section { padding: 15px; }
+            .feature-title, .section-title { font-size: 1.3rem; }
+            .display-area { font-size: 1rem; }
+            .styled-button { font-size: 0.9rem; padding: 10px 20px; }
+            .input-field { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 class="gradient-text">Zeromaths.fr</h1>
+
+    <div class="input-section">
+        <h2 class="feature-title">Explorateur de Concepts Mathématiques</h2>
+        <div class="difficulty-selector">
+            <label>Niveau :</label>
+            <input type="radio" id="level-debutant" name="difficulty" value="débutant">
+            <label for="level-debutant">Débutant</label>
+            <input type="radio" id="level-intermediaire" name="difficulty" value="intermédiaire" checked>
+            <label for="level-intermediaire">Intermédiaire</label>
+            <input type="radio" id="level-avance" name="difficulty" value="avancé">
+            <label for="level-avance">Avancé</label>
+        </div>
+        <input type="text" id="mathConceptInput" class="input-field" placeholder="Entrez un concept mathématique (ex: fraction)">
+        <button id="explainConceptBtn" class="styled-button">✨ Expliquer ce Concept</button>
+        <div id="conceptLoadingIndicator" class="loading-indicator" style="display: none;">Recherche de l'explication...✨</div>
+        <div id="conceptExplanationDisplay" class="display-area" style="margin-top:20px;">L'explication du concept apparaîtra ici...</div>
+    </div>
+
+    <div id="actionsSection" class="actions-section" style="display: none;">
+        <h3 class="section-title">Actions supplémentaires</h3>
+        <button id="showExampleBtn" class="styled-button secondary">💡 Montre-moi un exemple</button>
+        <div id="exampleLoadingIndicator" class="loading-indicator" style="display: none;">Génération de l'exemple... ✨</div>
+        <div id="conceptExamplesDisplay" class="display-area" style="display: none;">Les exemples apparaîtront ici...</div>
+        
+        <button id="generateProblemsBtn" class="styled-button tertiary" style="margin-top: 20px;">📝 Générer des problèmes</button>
+        <div id="problemLoadingIndicator" class="loading-indicator" style="display: none;">Génération des problèmes... ✨</div>
+        <div id="conceptProblemsDisplay" class="display-area" style="display: none;">Les problèmes d'entraînement apparaîtront ici...</div>
+    </div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let currentConcept = ""; // Pour stocker le concept actuel
+
+            const explainConceptBtn = document.getElementById('explainConceptBtn');
+            const mathConceptInput = document.getElementById('mathConceptInput');
+            const conceptExplanationDisplay = document.getElementById('conceptExplanationDisplay');
+            const conceptLoadingIndicator = document.getElementById('conceptLoadingIndicator');
+
+            const actionsSection = document.getElementById('actionsSection');
+            
+            const showExampleBtn = document.getElementById('showExampleBtn');
+            const conceptExamplesDisplay = document.getElementById('conceptExamplesDisplay');
+            const exampleLoadingIndicator = document.getElementById('exampleLoadingIndicator');
+
+            const generateProblemsBtn = document.getElementById('generateProblemsBtn');
+            const conceptProblemsDisplay = document.getElementById('conceptProblemsDisplay');
+            const problemLoadingIndicator = document.getElementById('problemLoadingIndicator');
+
+            // Fonction utilitaire pour le rendu MathJax
+            function typesetMath(element) {
+                if (typeof MathJax !== "undefined" && MathJax.startup) {
+                    MathJax.startup.promise.then(() => {
+                        console.log("MathJax prêt. Traitement de l'élément:", element.id);
+                        MathJax.typesetPromise([element])
+                            .catch((err) => console.error(`Erreur de rendu MathJax pour ${element.id}:`, err));
+                    }).catch((err) => console.error("Erreur au démarrage de MathJax:", err));
+                } else {
+                    console.warn("MathJax ou MathJax.startup n'est pas encore disponible.");
+                }
+            }
+
+            explainConceptBtn.addEventListener('click', async () => {
+                currentConcept = mathConceptInput.value.trim();
+                const selectedDifficulty = document.querySelector('input[name="difficulty"]:checked').value;
+
+                if (!currentConcept) {
+                    conceptExplanationDisplay.textContent = "Veuillez entrer un concept mathématique.";
+                    actionsSection.style.display = 'none'; // Cacher les actions si pas de concept
+                    return;
+                }
+
+                conceptExplanationDisplay.innerHTML = '';
+                conceptExamplesDisplay.innerHTML = ''; // Nettoyer les anciens exemples
+                conceptExamplesDisplay.style.display = 'none';
+                conceptProblemsDisplay.innerHTML = ''; // Nettoyer les anciens problèmes
+                conceptProblemsDisplay.style.display = 'none';
+                actionsSection.style.display = 'none'; // Cacher en attendant la réponse
+
+                conceptLoadingIndicator.style.display = 'block';
+                explainConceptBtn.disabled = true;
+                mathConceptInput.disabled = true;
+
+                let difficultyInstruction = "";
+                if (selectedDifficulty === "débutant") {
+                    difficultyInstruction = "Explique cela de manière très simple, avec des analogies basiques et un minimum de jargon, comme si tu t'adressais à un enfant ou à quelqu'un qui découvre totalement le sujet.";
+                } else if (selectedDifficulty === "avancé") {
+                    difficultyInstruction = "Fournis une explication détaillée et technique, n'hésite pas à utiliser des notations formelles et à aborder des aspects plus poussés du concept.";
+                } else { 
+                    difficultyInstruction = "Explique cela de manière claire et concise, pour quelqu'un ayant déjà quelques bases en mathématiques.";
+                }
+
+                const promptConcept = `Explique le concept mathématique "${currentConcept}" en français, pour un niveau ${selectedDifficulty}. ${difficultyInstruction} Pour toutes les expressions mathématiques, utilise IMPÉRATIVEMENT la syntaxe LaTeX standard : encadre les maths en ligne avec un seul dollar de chaque côté (par exemple: $x^2 + y^2 = z^2$) et les maths en mode display (équations sur leur propre ligne, centrées) avec deux dollars de chaque côté (par exemple: $$\\sum_{i=1}^{n} i = \\frac{n(n+1)}{2}$$). N'utilise PAS de backticks (\`) ou d'autres caractères superflus autour des expressions LaTeX elles-mêmes. Par exemple, écris '$E=mc^2$' et NON PAS '\`$E=mc^2$\`'.`;
+
+                try {
+                    const generatedText = await callGeminiAPI(promptConcept);
+                    conceptExplanationDisplay.textContent = generatedText;
+                    typesetMath(conceptExplanationDisplay);
+                    actionsSection.style.display = 'block'; // Afficher les boutons d'actions
+                    showExampleBtn.disabled = false;
+                    generateProblemsBtn.disabled = false;
+                } catch (error) {
+                    console.error('Erreur lors de l\'explication du concept:', error);
+                    conceptExplanationDisplay.textContent = `Erreur : ${error.message}. Veuillez réessayer.`;
+                    actionsSection.style.display = 'none';
+                } finally {
+                    conceptLoadingIndicator.style.display = 'none';
+                    explainConceptBtn.disabled = false;
+                    mathConceptInput.disabled = false;
+                }
+            });
+
+            showExampleBtn.addEventListener('click', async () => {
+                if (!currentConcept) return;
+
+                conceptExamplesDisplay.innerHTML = '';
+                conceptExamplesDisplay.style.display = 'block';
+                exampleLoadingIndicator.style.display = 'block';
+                showExampleBtn.disabled = true;
+
+                const promptExample = `Pour le concept mathématique "${currentConcept}", donne un ou deux exemples concrets, clairs et bien expliqués. Si c'est un problème, montre les étapes de résolution. Utilise la syntaxe LaTeX (avec $...$ et $$...$$) pour les mathématiques.`;
+
+                try {
+                    const generatedExample = await callGeminiAPI(promptExample);
+                    conceptExamplesDisplay.textContent = generatedExample;
+                    typesetMath(conceptExamplesDisplay);
+                } catch (error) {
+                    console.error('Erreur lors de la génération de l\'exemple:', error);
+                    conceptExamplesDisplay.textContent = `Erreur : ${error.message}. Veuillez réessayer.`;
+                } finally {
+                    exampleLoadingIndicator.style.display = 'none';
+                    showExampleBtn.disabled = false;
+                }
+            });
+
+            generateProblemsBtn.addEventListener('click', async () => {
+                if (!currentConcept) return;
+
+                conceptProblemsDisplay.innerHTML = '';
+                conceptProblemsDisplay.style.display = 'block';
+                problemLoadingIndicator.style.display = 'block';
+                generateProblemsBtn.disabled = true;
+
+                const promptProblems = `Pour le concept mathématique "${currentConcept}", génère 2 ou 3 problèmes d'entraînement pertinents (de difficulté adaptée au concept). Pour chaque problème, fournis une solution détaillée. Sépare clairement chaque problème de sa solution (par exemple, utilise "Problème 1:", puis "Solution 1:"). Utilise la syntaxe LaTeX (avec $...$ et $$...$$) pour toutes les mathématiques.`;
+
+                try {
+                    const generatedProblems = await callGeminiAPI(promptProblems);
+                    conceptProblemsDisplay.textContent = generatedProblems;
+                    typesetMath(conceptProblemsDisplay);
+                } catch (error) {
+                    console.error('Erreur lors de la génération des problèmes:', error);
+                    conceptProblemsDisplay.textContent = `Erreur : ${error.message}. Veuillez réessayer.`;
+                } finally {
+                    problemLoadingIndicator.style.display = 'none';
+                    generateProblemsBtn.disabled = false;
+                }
+            });
+
+            async function callGeminiAPI(promptText) {
+                // ... (La fonction callGeminiAPI reste la même qu'avant)
+                let chatHistory = [{ role: "user", parts: [{ text: promptText }] }];
+                const payload = { contents: chatHistory };
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                let resultJson;
+                if (!response.ok) {
+                    let errorDetails = "Erreur HTTP: " + response.status;
+                    try {
+                        resultJson = await response.json();
+                        if (resultJson && resultJson.error && resultJson.error.message) {
+                            errorDetails += " - " + resultJson.error.message;
+                        }
+                    } catch (e) {
+                        errorDetails += " (impossible de lire les détails de l'erreur)";
+                    }
+                    throw new Error(errorDetails);
+                }
+                resultJson = await response.json();
+                if (resultJson.candidates && resultJson.candidates.length > 0 &&
+                    resultJson.candidates[0].content && resultJson.candidates[0].content.parts &&
+                    resultJson.candidates[0].content.parts.length > 0) {
+                    return resultJson.candidates[0].content.parts[0].text.trim();
+                } else {
+                    if (resultJson.promptFeedback && resultJson.promptFeedback.blockReason) {
+                        let userMessage = "La réponse n'a pas pu être générée car la demande a été bloquée.";
+                        if (resultJson.promptFeedback.blockReason.reason) {
+                             userMessage += ` Raison: ${resultJson.promptFeedback.blockReason.reason}`;
+                        }
+                        throw new Error(userMessage);
+                    } else {
+                        throw new Error("Structure de réponse inattendue de l'API.");
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

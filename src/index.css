@@ -1,0 +1,102 @@
+/* src/index.css */
+
+/* Importation des directives Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Styles de base personnalisés */
+body {
+  /* Le fond du body est déjà un bleu très clair en mode jour et un dégradé sombre en mode nuit,
+     ce qui est cohérent avec un thème principal bleu/violet en mode jour. */
+  @apply bg-[#F0F3FD] dark:bg-gradient-to-br dark:from-gray-900 dark:to-black text-gray-800 dark:text-gray-200 font-sans antialiased;
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  margin: 0;
+}
+
+/* Styles pour le contenu injecté via dangerouslySetInnerHTML */
+/* Utilisation de theme() pour les couleurs personnalisées */
+.lesson-content h2, .exercise-content h2, .solution-content h2 {
+    @apply text-2xl font-bold mt-8 mb-4 pb-2 border-b;
+    /* primary.DEFAULT est maintenant Bleu/Violet pour le mode clair */
+    border-color: theme('colors.primary.DEFAULT');
+}
+.dark .lesson-content h2, .dark .exercise-content h2, .dark .solution-content h2 {
+    /* primary-dark.DEFAULT est maintenant Orange/Ambre pour le mode sombre */
+    border-color: theme('colors.primary-dark.DEFAULT');
+}
+
+.lesson-content h3, .exercise-content h3, .solution-content h3 { @apply text-xl font-semibold mt-6 mb-3 text-gray-700 dark:text-gray-300; }
+.lesson-content p, .exercise-content p, .solution-content p { @apply mb-4 leading-relaxed; }
+.lesson-content ol, .exercise-content ol, .solution-content ol { @apply list-decimal pl-6 mb-4; }
+.lesson-content ul, .exercise-content ul, .solution-content ul { @apply list-disc pl-6 mb-4; }
+.lesson-content pre, .exercise-content pre, .solution-content pre { @apply bg-gray-100 dark:bg-gray-800 p-3 rounded-md overflow-x-auto text-sm font-mono my-4; }
+.lesson-content strong, .exercise-content strong, .solution-content strong { @apply font-semibold; }
+
+/* Styles pour les boîtes spécifiques (couleurs adaptées au nouveau thème) */
+/* Nouveau Thème: Clair = Bleu/Violet, Sombre = Orange/Ambre */
+.example-box {
+    /* Mode clair: fond bleu très pâle, bordure gauche bleue (primary) */
+    @apply p-4 my-6 rounded-r-lg border-l-4 bg-blue-50 text-gray-700;
+    border-left-color: theme('colors.primary.DEFAULT');
+}
+.dark .example-box {
+    /* Mode sombre: fond orange très pâle/transparent, bordure gauche orange (primary-dark) */
+    @apply dark:bg-orange-900/30 dark:text-gray-300;
+    border-left-color: theme('colors.primary-dark.DEFAULT');
+}
+
+.formula-box {
+    /* Mode clair: fond violet très pâle, bordure et texte violets (basé sur secondary) */
+    @apply bg-purple-50 border border-purple-200 text-purple-800 p-4 my-6 rounded-lg text-center text-lg font-medium;
+}
+.dark .formula-box {
+    /* Mode sombre: fond ambre très pâle/transparent, bordure et texte ambre (basé sur secondary-dark) */
+    @apply dark:bg-amber-900/30 dark:border-amber-700 dark:text-amber-200;
+}
+
+.note-box {
+    /* Ces couleurs (indigo/jaune) sont gardées car elles semblent être des accents spécifiques
+       et non directement liées au thème primaire/secondaire.
+       Si elles doivent suivre le nouveau thème, il faudrait les adapter :
+       Clair: utiliser une teinte de primary (bleu) ou secondary (violet).
+       Sombre: utiliser une teinte de primary-dark (orange) ou secondary-dark (ambre).
+       Pour l'instant, je les laisse telles quelles. */
+    @apply bg-indigo-50 dark:bg-yellow-900/30 border border-indigo-200 dark:border-yellow-600 p-4 my-6 rounded-lg text-indigo-800 dark:text-yellow-200;
+}
+.note-box::before { content: "📝 Note : "; @apply font-semibold mr-1; }
+
+/* Styles spécifiques pour MathJax */
+.MathJax { outline: none; }
+
+/* Styles pour l'icône X personnalisée */
+.fa-x-custom::before { content: "𝕏"; font-weight: bold; font-size: 1.1em; line-height: 1; display: inline-block; }
+
+/* Amélioration focus pour accessibilité (couleurs adaptées au nouveau thème) */
+*:focus-visible {
+    /* primary.DEFAULT est bleu en mode clair */
+    outline: 2px solid theme('colors.primary.DEFAULT');
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+.dark *:focus-visible {
+    /* primary-dark.DEFAULT est orange en mode sombre */
+    outline-color: theme('colors.primary-dark.DEFAULT');
+}
+*:focus:not(:focus-visible) { outline: none; }
+
+/* Styles pour react-pdf */
+.react-pdf__Page__canvas { margin: 0 auto; max-width: 100%; height: auto !important; }
+.pdf-document-wrapper { /* Styles pour le conteneur du document si besoin */ }
+.pdf-page-wrapper { /* Styles pour le conteneur de page si besoin */ }
+
+/* Styles pour l'animation du burger */
+.burger div { transition: all 0.3s ease-in-out; }
+.burger.open div:nth-child(1) { @apply translate-y-[7px] rotate-45; }
+.burger.open div:nth-child(2) { @apply opacity-0; }
+.burger.open div:nth-child(3) { @apply -translate-y-[7px] -rotate-45; }
+
+/* Styles pour l'accordéon mobile */
+.transition-max-height { transition: max-height 0.3s ease-in-out; }
+
