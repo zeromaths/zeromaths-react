@@ -23,7 +23,7 @@ function AutomatismesPage({ level }) {
         const fracItems = [ { question: "2/4", answer: "1/2" }, { question: "6/8", answer: "3/4" }, { question: "5/10", answer: "1/2" }, { question: "3/9", answer: "1/3" }, { question: "10/15", answer: "2/3" }, { question: "8/12", answer: "2/3" }, { question: "4/16", answer: "1/4" }, { question: "9/12", answer: "3/4" }, { question: "6/10", answer: "3/5" }, { question: "12/16", answer: "3/4" }, { question: "14/21", answer: "2/3" }, { question: "15/20", answer: "3/4" }, { question: "18/24", answer: "3/4" }, { question: "20/25", answer: "4/5" }, { question: "7/14", answer: "1/2" }, { question: "9/15", answer: "3/5" }, ];
         for (let i = fracItems.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [fracItems[i], fracItems[j]] = [fracItems[j], fracItems[i]]; }
         return { multiplicationItems: multItems, calculItems: calcItems, fractionItems: fracItems };
-    }, [level]);
+    }, []);
 
     // Gestion du timer (inchangée)
     useEffect(() => { if (timerActive && timeLeft > 0) { timerIntervalRef.current = setInterval(() => setTimeLeft(p => p - 1), 1000); } else if (timeLeft <= 0) { clearInterval(timerIntervalRef.current); if (timerActive) { setTimerActive(false); setTimerFinished(true); } } return () => clearInterval(timerIntervalRef.current); }, [timerActive, timeLeft]);
