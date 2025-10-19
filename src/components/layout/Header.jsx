@@ -1,144 +1,108 @@
-// src/components/Layout/Header.js
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import Dropdown from './Dropdown'; // Importer Dropdown depuis le même dossier
+// src/components/layout/Header.jsx
+import React from 'react';
+import Dropdown from './Dropdown'; // Importer le nouveau composant Dropdown
 
-/**
- * En-tête principal de l'application.
- * Affiche le logo, la navigation desktop (avec dropdowns) et le bouton burger mobile.
- * Gère l'effet de disparition au scroll sur mobile.
- * Utilise les couleurs centralisées du thème.
- * @param {object} props - Props reçues du composant App.
- * @param {function} props.setActivePage - Fonction pour changer la page active.
- * @param {string} props.currentPage - La page currently active.
- * @param {boolean} props.isMobileMenuOpen - Indique si le menu mobile est ouvert (pour l'icône burger).
- * @param {function} props.toggleMobileMenu - Fonction pour ouvrir/fermer le menu mobile.
- * @param {Array} props.navLinks - Tableau définissant la structure de navigation.
- */
-function Header({ setActivePage, currentPage, isMobileMenuOpen, toggleMobileMenu, navLinks }) {
-    const [isScrolled, setIsScrolled] = useState(false); // Pour ajuster le padding/style au scroll
-    const [headerVisible, setHeaderVisible] = useState(true); // Pour masquer/afficher au scroll mobile
-    const lastScrollY = useRef(0); // Stocke la position de scroll précédente
-    const screenWidthThreshold = 1024; // Breakpoint 'lg' de Tailwind
+const Header = ({ navLinks, currentPage, setActivePage, toggleMobileMenu, isMobileMenuOpen }) => {
 
-    // Gère la visibilité et le style au scroll
-    const handleScroll = useCallback(() => {
-        const currentScrollY = window.scrollY;
-        const isMobile = window.innerWidth < screenWidthThreshold;
-
-        // Met à jour l'état 'scrolled' pour le style (ex: padding réduit)
-        setIsScrolled(currentScrollY > 50);
-
-        // Gère la visibilité uniquement sur les écrans plus petits que 'lg'
-        if (isMobile) {
-            // Cache si on scroll vers le bas et qu'on a dépassé un seuil
-            if (currentScrollY > lastScrollY.current && currentScrollY > 80) {
-                setHeaderVisible(false);
-            }
-            // Affiche si on scroll vers le haut ou si on est proche du haut
-            else if (currentScrollY < lastScrollY.current || currentScrollY < 10) {
-                setHeaderVisible(true);
-            }
-        } else {
-            // Assure la visibilité sur les écrans larges
-            setHeaderVisible(true);
+    const handleNavClick = (e, page, onClick) => {
+        e.preventDefault();
+        if (onClick) {
+            onClick(e);
+        } else if (page) {
+            setActivePage(page);
         }
-        // Met à jour la dernière position de scroll connue
-        lastScrollY.current = currentScrollY;
-    }, []); // Pas de dépendances externes nécessaires
-
-    // Ajoute et retire l'écouteur d'événement de scroll
-    useEffect(() => {
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        handleScroll(); // Vérifie l'état initial au montage
-        // Nettoyage de l'écouteur au démontage du composant
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, [handleScroll]);
-
-    // Fonction simplifiée pour la navigation depuis les liens directs du header
-    const handleNavClick = (page) => {
-        setActivePage(page);
-        // La fermeture du menu mobile est gérée dans setActivePage dans App.js
+        // On ne ferme le menu que si on a cliqué sur un lien qui change la page
+        if (isMobileMenuOpen && page) {
+            // On utilise un petit délai pour laisser le temps à la navigation de se faire sentir
+            setTimeout(() => toggleMobileMenu(), 100);
+        }
     };
 
-    // Vérifie si navLinks est bien un tableau avant de l'utiliser
-    if (!Array.isArray(navLinks)) {
-        console.error("Header: navLinks prop is not an array!");
-        return null; // Ou retourner un header de base/message d'erreur
-    }
+    // Filtrer le lien "Accueil" pour ne pas le dupliquer
+    const filteredNavLinks = navLinks ? navLinks.filter(link => link.page !== 'home') : [];
 
     return (
-        // Applique la transition et la translation pour l'effet de masquage/affichage
-        <header className={`fixed top-0 left-0 w-full z-[999] transition-transform duration-300 ease-in-out ${headerVisible ? 'translate-y-0' : '-translate-y-full'}`}>
-            {/* Barre de navigation principale */}
-            <nav className={`flex items-center justify-between px-4 lg:px-8 bg-black/85 dark:bg-gray-950/85 backdrop-blur-md transition-all duration-300 ease-in-out shadow-md ${isScrolled ? 'py-2' : 'py-4'}`}>
-                {/* Logo cliquable avec couleurs thème */}
-                <a
-                    href="#home"
-                    onClick={(e) => { e.preventDefault(); handleNavClick('home'); }}
-                    className="text-xl lg:text-2xl font-extrabold cursor-pointer bg-gradient-to-r from-primary to-secondary dark:from-primary-dark dark:to-secondary-dark bg-clip-text text-transparent" // Couleurs thème
-                >
-                    ZeroMaths
+        <nav className="fixed top-5 left-1/2 -translate-x-1/2 bg-white/70 dark:bg-gray-900/70 backdrop-blur-lg rounded-full py-3 px-4 sm:px-8 border border-gray-200 dark:border-gray-700 z-[1000] shadow-lg w-[95%] max-w-5xl">
+            <div className="flex items-center justify-between gap-4">
+                <a href="#home" onClick={(e) => handleNavClick(e, 'home')} className="flex items-center gap-2 text-lg font-bold text-gray-800 dark:text-white no-underline transition-opacity duration-300 hover:opacity-80">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M9 22V12H15V22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <span className="hidden sm:inline">Accueil</span>
                 </a>
-
-                {/* Navigation Desktop (masquée sur < lg) */}
-                <ul className="hidden lg:flex items-center space-x-5 xl:space-x-6 text-sm">
-                    {/* Boucle sur les liens définis dans App.js */}
-                    {navLinks.map(link => (
-                        link.isDropdown ? (
-                            // Si c'est un dropdown, utilise le composant Dropdown
-                            <Dropdown
-                                key={link.label} // Utilise le label comme clé (ou mieux, un ID unique si disponible)
-                                label={link.label}
-                                icon={link.icon}
-                                items={link.items}
-                                setActivePage={setActivePage}
-                                currentPage={currentPage}
-                                // isMobileMenuOpen n'est pas pertinent ici
-                            />
-                        ) : (
-                            // Sinon, affiche un lien direct
-                            <li key={link.page}>
-                                <a
-                                    href={link.href}
-                                    onClick={(e) => {
-                                        // Gère le clic spécial pour Contact ou la navigation normale
-                                        if (link.onClick) { link.onClick(e); }
-                                        else { e.preventDefault(); handleNavClick(link.page); }
-                                    }}
-                                    // Applique les styles actifs/hover et l'effet de soulignement
-                                    // Utilise les couleurs centralisées
-                                    className={`relative flex items-center py-1 px-1 transition-colors duration-300 rounded-md ${
-                                        currentPage === link.page ? 'text-primary dark:text-primary-dark font-semibold' : 'text-white hover:text-primary dark:hover:text-primary-dark hover:bg-white/10'
-                                    } after:absolute after:bottom-[-2px] after:left-0 after:h-0.5 after:w-0 after:bg-current after:transition-all after:duration-300 hover:after:w-full`}
-                                    aria-current={currentPage === link.page ? 'page' : undefined}
-                                >
-                                    {link.label}
-                                </a>
-                            </li>
-                        )
-                    ))}
-                </ul>
-
-                {/* Bouton Burger (affiché sur < lg) */}
-                <div className="lg:hidden z-[1001]"> {/* z-index pour rester cliquable même si header translate */}
-                    <button
-                        onClick={toggleMobileMenu} // Appelle la fonction du parent (App.js)
-                        className={`burger p-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary dark:focus-visible:ring-primary-dark rounded ${isMobileMenuOpen ? 'open' : ''}`} // La classe 'open' anime le burger
-                        aria-label={isMobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
-                        aria-expanded={isMobileMenuOpen}
-                        aria-controls="mobile-menu" // Lie au panneau mobile
-                    >
-                        {/* Les 3 barres du burger (stylisées dans index.css) */}
-                        <div className="w-6 h-0.5 bg-white rounded transition-all duration-300 ease-in-out"></div>
-                        <div className="w-6 h-0.5 bg-white rounded my-1.5 transition-all duration-300 ease-in-out"></div>
-                        <div className="w-6 h-0.5 bg-white rounded transition-all duration-300 ease-in-out"></div>
-                    </button>
+                
+                {/* Navigation Desktop */}
+                <div className="hidden lg:flex items-center flex-grow justify-center">
+                    <ul className="flex list-none gap-10">
+                        {filteredNavLinks.map(link => {
+                            if (link.isDropdown) {
+                                return (
+                                    <Dropdown
+                                        key={link.key}
+                                        label={link.label}
+                                        items={link.items}
+                                        currentPage={currentPage}
+                                        setActivePage={setActivePage}
+                                    />
+                                );
+                            }
+                            const isActive = currentPage === link.page;
+                            return (
+                                <li key={link.page}>
+                                    <a
+                                        href={link.href}
+                                        onClick={(e) => handleNavClick(e, link.page, link.onClick)}
+                                        className={`text-gray-600 dark:text-gray-300 no-underline font-medium text-base transition-colors duration-300 relative hover:text-gray-900 dark:hover:text-white ${isActive ? 'text-gray-900 dark:text-white' : ''} after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-5px] after:left-1/2 after:bg-current after:transition-all after:duration-300 after:-translate-x-1/2 hover:after:w-full ${isActive ? 'after:w-full' : ''}`}
+                                    >
+                                        {link.label}
+                                    </a>
+                                </li>
+                            );
+                        })}
+                    </ul>
                 </div>
-            </nav>
-            {/* Note: L'overlay du menu mobile (<div id="mobile-menu">) est rendu dans App.js */}
-            {/* pour ne pas être affecté par le translate-y de ce header */}
-        </header>
+
+                {/* Bouton Compte Desktop */}
+                <div className="hidden lg:flex items-center">
+                    <a href="#compte" onClick={(e) => handleNavClick(e, 'espace-eleve')} className="flex items-center gap-2 py-2 px-5 rounded-full text-white bg-gray-800 dark:text-black dark:bg-white font-medium text-sm transition-transform duration-300 hover:-translate-y-px whitespace-nowrap">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <span>Compte</span>
+                    </a>
+                </div>
+
+                {/* Bouton Hamburger Mobile */}
+                <button className="lg:hidden menu-toggle text-gray-800 dark:text-white text-2xl" onClick={toggleMobileMenu}>
+                    ☰
+                </button>
+            </div>
+
+            {/* Menu Mobile */}
+            <div className={`lg:hidden absolute top-full left-0 w-full mt-2 transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-4 pointer-events-none'}`}>
+                <ul className="flex flex-col bg-white/90 dark:bg-gray-900/95 backdrop-blur-lg rounded-xl p-4 gap-2 shadow-lg border border-gray-200 dark:border-gray-700">
+                    {filteredNavLinks.map(link => (
+                         <li key={link.page || link.key}>
+                            <a
+                                href={link.href || `#${link.page}`}
+                                onClick={(e) => handleNavClick(e, link.page || link.items[0].page, link.onClick)}
+                                className="block text-center text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white py-2 rounded-md"
+                            >
+                                {link.label}
+                            </a>
+                        </li>
+                    ))}
+                     <li>
+                        <a href="#compte" onClick={(e) => handleNavClick(e, 'espace-eleve')} className="flex items-center justify-center gap-2 py-2 px-5 rounded-full text-white bg-gray-800 dark:text-black dark:bg-white font-medium text-sm w-full mt-2">
+                            <span>Compte</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
     );
-}
+};
 
 export default Header;
