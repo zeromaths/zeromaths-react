@@ -1,10 +1,10 @@
 // src/pages/GamesPage.js
 import React, { useState, useCallback } from 'react';
 // Import des composants réutilisables
-import GlassTitle from '../components/Common/GlassTitle'; // Ajustez les chemins
-import HomeBanner from '../components/Common/HomeBanner';
-import GameCard from '../components/Games/GameCard';
-import CalculMentalGame from '../components/Games/CalculMentalGame';
+import GlassTitle from '../../components/ui/GlassTitle'; // Ajustez les chemins
+import HomeBanner from '../../components/ui/HomeBanner';
+import GameCard from './components/GameCard';
+import CalculMentalGame from './components/CalculMentalGame';
 // Importez d'autres composants de jeu ici si créés (ex: FractionsGame)
 
 /**

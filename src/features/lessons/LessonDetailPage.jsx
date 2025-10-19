@@ -2,8 +2,8 @@
 import React from 'react';
 import { MathJax } from 'better-react-mathjax'; // Import MathJax
 // Import des composants réutilisables
-import GlassTitle from '../components/Common/GlassTitle'; // Assurez-vous que ce chemin est correct
-import PdfViewer from '../components/Common/PdfViewer'; // Assurez-vous que ce chemin est correct
+import GlassTitle from '../../components/ui/GlassTitle'; // Assurez-vous que ce chemin est correct
+import PdfViewer from '../../components/ui/PdfViewer'; // Assurez-vous que ce chemin est correct
 
 /**
  * Composant pour afficher le détail d'une leçon (contenu HTML + PDF).

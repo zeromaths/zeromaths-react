@@ -1,10 +1,10 @@
 // src/pages/AutomatismesPage.js
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 // Import des composants réutilisables
-import GlassTitle from '../components/Common/GlassTitle'; // Vérifiez ce chemin
-import HomeBanner from '../components/Common/HomeBanner'; // Vérifiez ce chemin
+import GlassTitle from '../../components/ui/GlassTitle'; // Vérifiez ce chemin
+import HomeBanner from '../../components/ui/HomeBanner'; // Vérifiez ce chemin
 // ★★★ Chemin d'import corrigé (vérifiez qu'il correspond bien à votre structure) ★★★
-import AutomatismeGrid from '../components/Automatismes/AutomatismeGrid'; // Assurez-vous que le dossier et le fichier existent et sont correctement nommés
+import AutomatismeGrid from './components/AutomatismeGrid'; // Assurez-vous que le dossier et le fichier existent et sont correctement nommés
 
 /**
  * Composant pour la page des automatismes.

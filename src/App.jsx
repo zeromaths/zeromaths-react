@@ -1,5 +1,5 @@
 // src/App.js
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, Suspense, lazy } from 'react';
 
 // Import des bibliothèques externes
 import { MathJaxContext } from 'better-react-mathjax'; // Pour le rendu LaTeX
@@ -10,29 +10,32 @@ import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 
 // Import des composants de Layout (structure) depuis leurs nouveaux emplacements
-import Header from './components/Layout/Header';
-import Footer from './components/Layout/Footer';
-import DarkModeToggle from './components/Layout/DarkModeToggle';
-import BackToTopButton from './components/Layout/BackToTopButton';
+import Header from './components/layout/Header';
+import Footer from './components/layout/Footer';
+import DarkModeToggle from './components/layout/DarkModeToggle';
+import BackToTopButton from './components/layout/BackToTopButton';
 
-// Import des composants de Page (chaque page est maintenant un composant séparé)
-import HomePage from './pages/HomePage';
-import LessonsPage from './pages/LessonsPage';
-import LessonDetailPage from './pages/LessonDetailPage';
-import ExercisesPage from './pages/ExercisesPage';
-import GamesPage from './pages/GamesPage';
-import AutomatismesPage from './pages/AutomatismesPage';
-import PlaceholderComponent from './components/Common/PlaceholderComponent'; // Pour les pages non encore créées
+// Import statique pour la page d'accueil et le placeholder
+import HomePage from './HomePage';
+import PlaceholderComponent from './components/ui/PlaceholderComponent'; // Pour les pages non encore créées
+
+// Import dynamique (Lazy Loading) pour les autres pages
+const LessonsPage = lazy(() => import('./features/lessons/LessonsPage'));
+const LessonDetailPage = lazy(() => import('./features/lessons/LessonDetailPage'));
+const ExercisesPage = lazy(() => import('./features/lessons/ExercisesPage'));
+const GamesPage = lazy(() => import('./features/games/GamesPage'));
+const AutomatismesPage = lazy(() => import('./features/automatismes/AutomatismesPage'));
 
 // Import des données depuis leurs nouveaux emplacements
 // Assurez-vous que les chemins et les noms exportés sont corrects
-import { chapters6eme, testLessonContent } from './data/lessonData';
-import { exercises6eme } from './data/exerciseData';
-import { games6eme } from './data/gameData';
+import { chapters6eme, testLessonContent } from './features/lessons/data';
+import { exercises6eme } from './features/lessons/exerciseData';
+import { games6eme } from './features/games/data';
 
 // Configuration du Worker PDF.js (une seule fois dans l'application)
 // Assurez-vous que 'pdfjs-dist' est installé (`npm install pdfjs-dist`)
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+
 
 /**
  * Composant principal de l'application (Racine).
@@ -301,7 +304,9 @@ function App() {
                 {/* Contenu principal de la page */}
                 {/* La clé change à chaque navigation pour potentiellement aider aux transitions/animations */}
                 <main key={currentPage} className="pt-[70px] lg:pt-[80px] min-h-[calc(100vh-150px)]">
-                    {renderPage()}
+                    <Suspense fallback={<div className="text-center p-8">Chargement...</div>}>
+                        {renderPage()}
+                    </Suspense>
                 </main>
 
                 {/* Pied de page */}

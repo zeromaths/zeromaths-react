@@ -1,9 +1,9 @@
 // src/pages/ExercisesPage.js
 import React from 'react';
 // Import des composants réutilisables
-import GlassTitle from '../components/Common/GlassTitle'; // Ajustez les chemins si nécessaire
-import HomeBanner from '../components/Common/HomeBanner';
-import ExerciseCard from '../components/Lessons/ExerciseCard'; // Assurez-vous que ce chemin est correct
+import GlassTitle from '../../components/ui/GlassTitle'; // Ajustez les chemins si nécessaire
+import HomeBanner from '../../components/ui/HomeBanner';
+import ExerciseCard from './components/ExerciseCard'; // Assurez-vous que ce chemin est correct
 
 /**
  * Composant pour afficher la liste des exercices d'un niveau/chapitre.

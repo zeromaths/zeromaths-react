@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 // Importe les styles globaux (y compris Tailwind)
-import './index.css';
+import './styles/index.css';
 
 // Importe le composant principal de l'application
 import App from './App';

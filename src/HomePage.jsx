@@ -1,11 +1,11 @@
 // src/pages/HomePage.js
 import React from 'react';
 // Import des composants réutilisables nécessaires
-import GlassTitle from '../components/Common/GlassTitle';
-import HomeBanner from '../components/Common/HomeBanner';
-import CardsSection from '../components/Common/CardsSection';
-import Card from '../components/Common/Card';
-import ContactForm from '../components/Common/ContactForm';
+import GlassTitle from './components/ui/GlassTitle';
+import HomeBanner from './components/ui/HomeBanner';
+import CardsSection from './components/ui/CardsSection';
+import Card from './components/ui/Card';
+import ContactForm from './components/ui/ContactForm';
 
 /**
  * Composant représentant la page d'accueil.

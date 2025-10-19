@@ -1,6 +1,6 @@
 // src/components/Automatismes/AutomatismeGrid.js
 import React from 'react';
-import AutomatismeItem from './AutomatismeItem'; // Importer l'item depuis le même dossier
+import AutomatismeItem from './AutomatismeItem';
 
 /**
  * Grille d'automatismes pour une catégorie donnée.
