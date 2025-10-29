@@ -12,25 +12,26 @@ import 'react-pdf/dist/esm/Page/TextLayer.css';
 // Import des composants de Layout (structure) depuis leurs nouveaux emplacements
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
-import DarkModeToggle from './components/layout/DarkModeToggle';
+
 import BackToTopButton from './components/layout/BackToTopButton';
 
 // Import statique pour la page d'accueil et le placeholder
-import HomePage from './HomePage';
-import PlaceholderComponent from './components/ui/PlaceholderComponent'; // Pour les pages non encore créées
+const HomePage = lazy(() => import('./pages/HomePage'));
+const PlaceholderComponent = lazy(() => import('./components/ui/PlaceholderComponent')); // Pour les pages non encore créées
 
 // Import dynamique (Lazy Loading) pour les autres pages
-const LessonsPage = lazy(() => import('./features/lessons/LessonsPage'));
-const LessonDetailPage = lazy(() => import('./features/lessons/LessonDetailPage'));
-const ExercisesPage = lazy(() => import('./features/lessons/ExercisesPage'));
-const GamesPage = lazy(() => import('./features/games/GamesPage'));
-const AutomatismesPage = lazy(() => import('./features/automatismes/AutomatismesPage'));
+const LessonsPage = lazy(() => import('./pages/LessonsPage'));
+const LessonDetailPage = lazy(() => import('./pages/LessonDetailPage'));
+const ExercisesPage = lazy(() => import('./pages/ExercisesPage'));
+const GamesPage = lazy(() => import('./pages/GamesPage'));
+const AutomatismesPage = lazy(() => import('./pages/AutomatismesPage'));
 
 // Import des données depuis leurs nouveaux emplacements
 // Assurez-vous que les chemins et les noms exportés sont corrects
 import { chapters6eme, testLessonContent } from './features/lessons/data';
 import { exercises6eme } from './features/lessons/exerciseData';
 import { games6eme } from './features/games/data';
+import chapitre1Pdf from './assets/lessons/6eme/chapitre1.pdf';
 
 // Configuration du Worker PDF.js (une seule fois dans l'application)
 // Assurez-vous que 'pdfjs-dist' est installé (`npm install pdfjs-dist`)
@@ -88,11 +89,6 @@ function App() {
         if (isMobileMenuOpen) { // Note: utilise la valeur *avant* la mise à jour de l'état
             setExpandedMobileSection(null);
         }
-    };
-
-    // Menu mobile : ouvrir/fermer une section de l'accordéon
-    const toggleMobileSection = (sectionKey) => {
-        setExpandedMobileSection(prev => (prev === sectionKey ? null : sectionKey)); // Bascule ou définit la section ouverte
     };
 
     // Fonction pour changer la page affichée
@@ -156,17 +152,6 @@ function App() {
     }, [setActivePage]); // Recalculer si setActivePage change (pour la closure)
 
 
-    // --- Fonction de Clic pour les Liens de l'Overlay Mobile ---
-    const handleOverlayNavClick = (e, link) => {
-        if (link.isContact && link.onClick) {
-            link.onClick(e); // Utilise la fonction onClick définie dans navLinks
-        } else {
-            e.preventDefault();
-            setActivePage(link.page); // Navigation standard
-        }
-        // La fermeture du menu est gérée par setActivePage
-    };
-
     // --- Rendu Conditionnel de la Page Active ---
     const renderPage = () => {
         // ★★★ Correction: pageType retiré, pageId utilisé pour levelNum ★★★
@@ -194,7 +179,7 @@ function App() {
             // Pages 6ème
             case 'lessons-6eme': return <LessonsPage level="6ème" chapters={currentChapters} setActivePage={setActivePage} />;
             // Utilise le contenu de test pour la leçon 1
-            case 'lesson-chapitre1': return ( <> <LessonDetailPage title="Test Rendu LaTeX" subtitle="Chapitre Test avec MathJax" contentHtml={testLessonContent} pdfPath="/lessons/6eme/chapitre1.pdf" /> </> );
+            case 'lesson-chapitre1': return ( <> <LessonDetailPage title="Test Rendu LaTeX" subtitle="Chapitre Test avec MathJax" contentHtml={testLessonContent} pdfPath={chapitre1Pdf} /> </> );
             case 'exercises-6eme': return <ExercisesPage level="6ème" chapterTitle="Nombres et calculs" exercises={currentExercises} />;
             case 'games-6eme': return <GamesPage level="6ème" games={currentGames} />;
             case 'automatismes-6eme': return <AutomatismesPage level="6ème" />;
@@ -243,62 +228,10 @@ function App() {
                     isMobileMenuOpen={isMobileMenuOpen}
                     toggleMobileMenu={toggleMobileMenu}
                     navLinks={navLinks} // Passe les liens définis ici
+                    isDarkMode={isDarkMode} 
+                    toggleDarkMode={toggleDarkMode}
                 />
-                {/* Bouton Mode Sombre */}
-                <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
 
-                {/* --- Overlay Menu Mobile (géré par App) --- */}
-                <div
-                    id="mobile-menu"
-                    className={`lg:hidden fixed inset-0 bg-black/75 dark:bg-gray-950/75 backdrop-blur-md z-[1000] transition-transform duration-500 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
-                    aria-hidden={!isMobileMenuOpen}
-                >
-                    <button onClick={toggleMobileMenu} className="absolute top-4 right-4 text-white text-3xl p-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded" aria-label="Fermer le menu">&times;</button>
-                    {/* Liste des liens avec accordéon */}
-                    <ul className="flex flex-col items-center justify-center h-full space-y-2 text-lg overflow-y-auto pb-16 pt-16 px-4">
-                        {navLinks.map(link => (
-                            <li key={link.page || link.label} className="w-full text-center">
-                                {link.isDropdown ? (
-                                    // Section Accordéon pour les niveaux
-                                    <div className="w-full">
-                                        <button
-                                            onClick={() => toggleMobileSection(link.key)}
-                                            className={`relative w-full flex items-center justify-center py-3 px-4 rounded-md transition-colors duration-300 font-semibold ${currentPage.startsWith(link.key) ? 'text-primary-light dark:text-primary-dark-light' : 'text-white hover:text-primary-light dark:hover:text-primary-dark-light hover:bg-white/10'} after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-0.5 after:w-0 after:bg-current after:transition-all after:duration-300 hover:after:w-1/4`}
-                                            aria-expanded={expandedMobileSection === link.key}
-                                        >
-                                            {link.label}
-                                        </button>
-                                        {/* Sous-menu accordéon */}
-                                        <ul className={`pl-4 overflow-hidden transition-max-height duration-300 ease-in-out ${expandedMobileSection === link.key ? 'max-h-96' : 'max-h-0'}`}>
-                                            {link.items.map(item => (
-                                                <li key={item.page} className="mt-1">
-                                                    <a
-                                                        href={`#${item.page}`} // Lien interne pour la navigation SPA
-                                                        onClick={(e) => { e.preventDefault(); setActivePage(item.page); }}
-                                                        className={`block py-2 px-4 rounded-md text-base transition-colors duration-300 ${currentPage === item.page ? 'text-primary-light dark:text-primary-dark-light font-semibold bg-white/5' : 'text-gray-300 hover:text-primary-light dark:hover:text-primary-dark-light hover:bg-white/5'}`}
-                                                        aria-current={currentPage === item.page ? 'page' : undefined}
-                                                    >
-                                                        {item.label}
-                                                    </a>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                ) : (
-                                    // Lien Direct
-                                    <a
-                                        href={link.href}
-                                        onClick={(e) => handleOverlayNavClick(e, link)}
-                                        className={`relative flex items-center justify-center py-3 px-4 rounded-md transition-colors duration-300 ${currentPage === link.page ? 'text-primary-light dark:text-primary-dark-light font-semibold' : 'text-white hover:text-primary-light dark:hover:text-primary-dark-light hover:bg-white/10'} after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:h-0.5 after:w-0 after:bg-current after:transition-all after:duration-300 hover:after:w-1/4`}
-                                        aria-current={currentPage === link.page ? 'page' : undefined}
-                                    >
-                                        {link.label}
-                                    </a>
-                                )}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
                 {/* --- Fin Overlay --- */}
 
                 {/* Contenu principal de la page */}

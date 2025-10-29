@@ -14,7 +14,7 @@ function DarkModeToggle({ isDarkMode, toggleDarkMode }) {
             onClick={toggleDarkMode}
             // La classe 'material-icons' active la police d'icônes
             // Le contenu textuel ('light_mode' ou 'dark_mode') est le nom de l'icône
-            className="material-icons fixed top-20 left-4 z-50 text-white bg-black bg-opacity-50 p-2 rounded-full cursor-pointer shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            className="material-icons text-gray-800 dark:text-white p-2 rounded-full cursor-pointer transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500"
             aria-label={isDarkMode ? "Activer le mode clair" : "Activer le mode sombre"}
             aria-pressed={isDarkMode} // Indique l'état actuel
         >

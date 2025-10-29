@@ -1,8 +1,10 @@
 // src/components/layout/Header.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import Dropdown from './Dropdown'; // Importer le nouveau composant Dropdown
+import DarkModeToggle from './DarkModeToggle';
 
-const Header = ({ navLinks, currentPage, setActivePage, toggleMobileMenu, isMobileMenuOpen }) => {
+const Header = ({ navLinks, currentPage, setActivePage, toggleMobileMenu, isMobileMenuOpen, isDarkMode, toggleDarkMode }) => {
+    const [expandedDropdown, setExpandedDropdown] = useState(null);
 
     const handleNavClick = (e, page, onClick) => {
         e.preventDefault();
@@ -63,8 +65,9 @@ const Header = ({ navLinks, currentPage, setActivePage, toggleMobileMenu, isMobi
                     </ul>
                 </div>
 
-                {/* Bouton Compte Desktop */}
-                <div className="hidden lg:flex items-center">
+                <div className="hidden lg:flex items-center gap-4">
+                    <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
+                    {/* Bouton Compte Desktop */}
                     <a href="#compte" onClick={(e) => handleNavClick(e, 'espace-eleve')} className="flex items-center gap-2 py-2 px-5 rounded-full text-white bg-gray-800 dark:text-black dark:bg-white font-medium text-sm transition-transform duration-300 hover:-translate-y-px whitespace-nowrap">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -81,21 +84,56 @@ const Header = ({ navLinks, currentPage, setActivePage, toggleMobileMenu, isMobi
             </div>
 
             {/* Menu Mobile */}
-            <div className={`lg:hidden absolute top-full left-0 w-full mt-2 transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-4 pointer-events-none'}`}>
+            <div className={`lg:hidden absolute top-full left-0 w-full mt-2 transition-all duration-500 ease-in-out ${isMobileMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-4'}`}>
                 <ul className="flex flex-col bg-white/90 dark:bg-gray-900/95 backdrop-blur-lg rounded-xl p-4 gap-2 shadow-lg border border-gray-200 dark:border-gray-700">
                     {filteredNavLinks.map(link => (
-                         <li key={link.page || link.key}>
+                        <li key={link.page || link.key}>
                             <a
                                 href={link.href || `#${link.page}`}
-                                onClick={(e) => handleNavClick(e, link.page || link.items[0].page, link.onClick)}
-                                className="block text-center text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white py-2 rounded-md"
+                                onClick={(e) => {
+                                    if (link.isDropdown) {
+                                        e.preventDefault();
+                                        setExpandedDropdown(expandedDropdown === link.key ? null : link.key);
+                                    } else {
+                                        handleNavClick(e, link.page, link.onClick);
+                                        toggleMobileMenu();
+                                    }
+                                }}
+                                className="block text-left text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white py-2 rounded-md"
                             >
-                                {link.label}
+                                <div className="flex items-center justify-between">
+                                    <span>{link.label}</span>
+                                    {link.isDropdown && (
+                                        <svg className={`w-5 h-5 transition-transform duration-300 ${expandedDropdown === link.key ? 'transform rotate-180' : ''}`}>
+                                            <path fill="currentColor" d="M7.41,8.59L12,13.17l4.59-4.58L18,10l-6,6l-6-6L7.41,8.59z"/>
+                                        </svg>
+                                    )}
+                                </div>
                             </a>
+                            {link.isDropdown && expandedDropdown === link.key && (
+                                <ul className="pl-4">
+                                    {link.items.map(item => (
+                                        <li key={item.page}>
+                                            <a
+                                                href={`#${item.page}`}
+                                                onClick={(e) => {handleNavClick(e, item.page); toggleMobileMenu();}}
+                                                className="block text-left text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white py-2 rounded-md"
+                                            >
+                                                {item.label}
+                                            </a>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
                         </li>
                     ))}
+                    <li>
+                        <div className="flex items-center justify-center mt-2">
+                            <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
+                        </div>
+                    </li>
                      <li>
-                        <a href="#compte" onClick={(e) => handleNavClick(e, 'espace-eleve')} className="flex items-center justify-center gap-2 py-2 px-5 rounded-full text-white bg-gray-800 dark:text-black dark:bg-white font-medium text-sm w-full mt-2">
+                        <a href="#compte" onClick={(e) => {handleNavClick(e, 'espace-eleve'); toggleMobileMenu();}} className="flex items-center justify-center gap-2 py-2 px-5 rounded-full text-white bg-gray-800 dark:text-black dark:bg-white font-medium text-sm w-full mt-2">
                             <span>Compte</span>
                         </a>
                     </li>

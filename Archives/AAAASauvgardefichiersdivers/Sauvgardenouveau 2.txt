@@ -1,9 +1,0 @@
-const prompt = `Explique le concept mathématique "${currentConcept}" en français, pour un niveau ${currentDifficulty}. ${difficultyInstruction} Pour toutes les expressions mathématiques, utilise IMPÉRATIVEMENT la syntaxe LaTeX standard : encadre les maths en ligne avec un seul dollar de chaque côté (par exemple: <span class="math-inline">x^2 \+ y^2 \= z^2</span>) et les maths en mode display (équations sur leur propre ligne, centrées) avec deux dollars de chaque côté (par exemple: <span class="math-block">\\\\sum\_\{i\=1\}^\{n\} i \= \\\\frac\{n\(n\+1\)\}\{2\}</span>). N'utilise PAS de backticks (\`) ou d'autres caractères superflus autour des expressions LaTeX elles-mêmes.`;
-
-
-
-
-const promptExample = `Pour le concept mathématique "${currentConcept}" (expliqué pour un niveau ${currentDifficulty}), donne un ou deux exemples concrets, clairs et bien expliqués. Si c'est un problème, montre les étapes de résolution. Utilise la syntaxe LaTeX (avec $...$ et $$...$$) pour les mathématiques.`;
-
-
-const promptProblems = `Pour le concept mathématique "${currentConcept}" (niveau ${currentDifficulty}), génère 2 ou 3 problèmes d'entraînement, si possible avec une difficulté ou une approche légèrement progressive. Pour chaque problème : 1. Énonce clairement le problème. 2. Ensuite, fournis des indices ou une série de questions directrices pour aider l'élève à trouver la solution par lui-même. 3. Enfin, donne une solution détaillée étape par étape, mais assure-toi que la partie "guidance/indices" vient en premier pour encourager la réflexion. Sépare clairement chaque problème, sa section d'indices/guidance, et sa solution détaillée (par exemple, utilise des titres comme 'Problème 1:', 'Indices pour le Problème 1:', 'Solution guidée du Problème 1:'). Utilise la syntaxe LaTeX ($...$ et $$...$$) pour toutes les expressions mathématiques.`;
