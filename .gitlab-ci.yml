@@ -3,34 +3,69 @@ image: node:20
 
 # Définir les étapes du pipeline
 stages:
+  - build
   - deploy
+  - release
 
 # Mise en cache des node_modules pour accélérer les builds futurs
 cache:
   paths:
     - node_modules/
 
-# Le job qui construit et déploie le site sur GitLab Pages
+# --- Build Vite (utile pour les tags ET/OU pour vérifier le build) ---
+build_app:
+  stage: build
+  script:
+    - corepack enable
+    - pnpm i --frozen-lockfile || npm ci
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
+  rules:
+    # Build sur les tags SemVer (ex: v1.0.0) pour joindre des artefacts à la release
+    - if: '$CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/'
+    # Optionnel: build aussi sur master si tu veux double vérifier
+    - if: '$CI_COMMIT_BRANCH == "master"'
+
+# --- Déploiement GitLab Pages (ta config existante) ---
 pages:
   stage: deploy
+  needs: []
   script:
-    # Installer les dépendances
-    - npm install
-    # Construire l'application dans le dossier "dist" par défaut
+    - corepack enable
+    - pnpm i --frozen-lockfile || npm ci
     - npm run build
-    # Supprimer l'ancien dossier public pour éviter les conflits
-    - rm -rf public
     # Renommer "dist" en "public" comme requis par GitLab Pages
     - mv dist public
-    # Astuce pour les Single Page Applications (SPA) comme React :
-    # Copier index.html en 404.html permet de gérer la navigation côté client.
-    # Si l'utilisateur recharge une page (ex: /lecons), GitLab sert la page 404,
-    # qui est en fait notre index.html, et le routeur React prend le relais.
+    # SPA fallback pour React (404 -> index.html)
     - cp public/index.html public/404.html
   artifacts:
     paths:
-      # Le dossier qui contient le site à déployer
       - public
   rules:
     # Ce job ne s'exécute que lorsque des changements sont poussés sur la branche "master"
     - if: '$CI_COMMIT_BRANCH == "master"'
+
+# --- Publication Release (obligatoire pour le CI/CD Catalog) ---
+create_release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  needs: ["build_app"]
+  rules:
+    # Déclenche sur tags SemVer (vX.Y.Z)
+    - if: '$CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/'
+  script:
+    - echo "🪄 Publishing release for $CI_COMMIT_TAG"
+  release:
+    tag_name: $CI_COMMIT_TAG
+    name: "ZeroMaths $CI_COMMIT_TAG"
+    description: |
+      ZeroMaths $CI_COMMIT_TAG — Major project refactor and dark mode integration.
+
+      **Key changes:**
+      - Reorganized file structure for better maintainability.
+      - Moved pages to src/pages, assets to src/assets, and docs to docs/.
+      - Integrated dark mode toggle into the header.
+      - Fixed all broken import paths and asset loading issues.
