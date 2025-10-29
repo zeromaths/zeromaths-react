@@ -32,11 +32,9 @@ build_app:
 # --- Déploiement GitLab Pages (ta config existante) ---
 pages:
   stage: deploy
-  needs: []
+  needs: ["build_app"]
   script:
-    - corepack enable
-    - pnpm i --frozen-lockfile || npm ci
-    - npm run build
+    - echo "Deploying build artifact to GitLab Pages..."
     # Renommer "dist" en "public" comme requis par GitLab Pages
     - mv dist public
     # SPA fallback pour React (404 -> index.html)
@@ -45,8 +43,8 @@ pages:
     paths:
       - public
   rules:
-    # Ce job ne s'exécute que lorsque des changements sont poussés sur la branche "master"
-    - if: '$CI_COMMIT_BRANCH == "master"'
+    # Ce job s'exécute lorsque des changements sont poussés sur la branche "master" OU sur un tag
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_TAG'
 
 # --- Publication Release (obligatoire pour le CI/CD Catalog) ---
 create_release:
