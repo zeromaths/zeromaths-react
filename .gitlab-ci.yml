@@ -16,6 +16,7 @@ cache:
 build_app:
   stage: build
   script:
+    - npm cache clean --force
     - corepack enable
     - pnpm i --frozen-lockfile || npm ci
     - npm run build
