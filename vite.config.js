@@ -5,4 +5,11 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   base: '/zeromaths-react/',
   plugins: [react()],
+  build: {
+    rollupOptions: {
+      input: {
+        app: './src/index.jsx',
+      },
+    },
+  },
 })
