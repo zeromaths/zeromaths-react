@@ -18,7 +18,7 @@
   },
   "scripts": {
     "dev": "vite --host",
-    "build": "rm -rf dist && vite build",
+    "build": "rm -rf dist && vite build --base=/",
     "preview": "vite preview"
   },
   "eslintConfig": {
